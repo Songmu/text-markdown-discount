@@ -31,7 +31,8 @@ require XSLoader;
 XSLoader::load('Text::Markdown::Discount', $VERSION);
 
 sub new {
-    return bless {}, 'Text::Markdown::Discount';
+    my ($class, %args) = @_;
+    $class->_new($args{html5}, $args{gfm});
 }
 
 sub markdown {

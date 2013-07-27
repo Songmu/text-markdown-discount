@@ -88,6 +88,27 @@ is not compatible with the C<markdown()> function in L<Text::Markdown>.
 
 I<markdown> is exported by default.
 
+=head2 CONSTRUCTOR
+
+OO interface is also available as follows.
+
+    my $md = Text::Markdown::Discount->new(%opt);
+    my $html = $md->markdown($text);
+
+C<new> is constructor and C<%opt> is constructor option.
+keys of C<%opt> is as follows.
+
+=over
+
+=item html5
+
+Enabling html5 elements handling.
+
+B<Warning>. Once generated html5 enabled object, following ALL C<< Text::Markdown::Discount::markdown() >>
+calls are affected and are html5 enabled in same process. It's not only limited the object which html5 flags on.
+
+=back
+
 =head1 SEE ALSO
 
 There are other modules on CPAN for converting Markdown:

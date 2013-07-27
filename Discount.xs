@@ -98,6 +98,9 @@ TextMarkdown__new(clazz, html5, gfm)
         Text__Markdown__Discount self;
     CODE:
         self = calloc(1, sizeof(struct tmdd_obj));
+        if (html5) {
+            mkd_with_html5_tags();
+        }
         self->html5 = html5;
         self->gfm   = gfm;
         RETVAL = self;

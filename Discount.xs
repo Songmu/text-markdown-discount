@@ -7,6 +7,12 @@
 #include <string.h>
 #include <mkdio.h>
 
+typedef struct tmdd_obj {
+} tmdd_obj;
+
+typedef tmdd_obj *Text__Markdown__Discount;
+
+
 MODULE = Text::Markdown::Discount		PACKAGE = Text::Markdown::Discount	PREFIX = TextMarkdown_
 
 PROTOTYPES: DISABLE
@@ -37,7 +43,8 @@ BOOT:
     newCONSTSUB(stash, "MKD_EXTRA_FOOTNOTE", newSViv(MKD_EXTRA_FOOTNOTE));
 
 SV *
-TextMarkdown__markdown(sv_str, flags)
+TextMarkdown__markdown(self, sv_str, flags)
+        Text::Markdown::Discount self
         SV *sv_str
         int flags;
     PREINIT:

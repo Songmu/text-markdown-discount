@@ -51,7 +51,7 @@ sub markdown {
     if (not defined $flags) {
         $flags = MKD_NOHEADER()|MKD_NOPANTS();
     }
-    return _markdown($text, $flags);
+    return $self->_markdown($text, $flags);
 }
 
 

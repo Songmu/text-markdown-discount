@@ -32,7 +32,7 @@ XSLoader::load('Text::Markdown::Discount', $VERSION);
 
 sub new {
     my ($class, %args) = @_;
-    $class->_new($args{html5}, $args{gfm});
+    $class->_new($args{html5});
 }
 
 sub markdown {

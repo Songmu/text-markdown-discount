@@ -9,7 +9,6 @@
 
 typedef struct tmdd_obj {
     bool html5;
-    bool gfm;
 } tmdd_obj;
 
 typedef tmdd_obj *Text__Markdown__Discount;
@@ -57,15 +56,8 @@ TextMarkdown__markdown(self, sv_str, flags)
         int szhtml;
         MMIOT *doc;
     CODE:
-        if (self->gfm) {
-            if ( (doc = gfm_string(text, strlen(text), flags)) == 0 ) {
-                croak("failed at gfm_string");
-            }
-        }
-        else {
-            if ( (doc = mkd_string(text, strlen(text), flags)) == 0 ) {
-                croak("failed at mkd_string");
-            }
+        if ( (doc = mkd_string(text, strlen(text), flags)) == 0 ) {
+            croak("failed at mkd_string");
         }
 
         if ( !mkd_compile(doc, flags) ) {
@@ -90,10 +82,9 @@ TextMarkdown__markdown(self, sv_str, flags)
         RETVAL
 
 Text::Markdown::Discount
-TextMarkdown__new(clazz, html5, gfm)
+TextMarkdown__new(clazz, html5)
     char *clazz
     bool html5
-    bool gfm
     PREINIT:
         Text__Markdown__Discount self;
     CODE:
@@ -102,7 +93,6 @@ TextMarkdown__new(clazz, html5, gfm)
             mkd_with_html5_tags();
         }
         self->html5 = html5;
-        self->gfm   = gfm;
         RETVAL = self;
     OUTPUT:
         RETVAL

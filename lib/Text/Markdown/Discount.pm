@@ -104,8 +104,9 @@ keys of C<%opt> is as follows.
 
 Enabling html5 elements handling.
 
-B<Warning>. Once generated html5 enabled object, following ALL C<< Text::Markdown::Discount::markdown() >>
-calls are affected and are html5 enabled in same process. It's not only limited the object which html5 flags on.
+B<CAUTION>: Once generated html5 enabled object, following B<ALL> C<< Text::Markdown::Discount::markdown() >>
+calls are affected and html5 enabled in same Perl process and there is no way to disable it.
+It's not only limited the object which html5 flags on.
 
 =back
 

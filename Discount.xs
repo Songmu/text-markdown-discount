@@ -13,7 +13,6 @@ typedef struct tmdd_obj {
 
 typedef tmdd_obj *Text__Markdown__Discount;
 
-
 MODULE = Text::Markdown::Discount		PACKAGE = Text::Markdown::Discount	PREFIX = TextMarkdown_
 
 PROTOTYPES: DISABLE

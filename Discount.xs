@@ -55,6 +55,12 @@ TextMarkdown__markdown(self, sv_str, flags)
         int szhtml;
         MMIOT *doc;
     CODE:
+        if ( self->html5 ) {
+            mkd_with_html5_tags();
+        } else {
+            mkd_deallocate_tags();
+        }
+
         if ( (doc = mkd_string(text, strlen(text), flags)) == 0 ) {
             croak("failed at mkd_string");
         }
@@ -88,9 +94,6 @@ TextMarkdown__new(clazz, html5)
         Text__Markdown__Discount self;
     CODE:
         self = calloc(1, sizeof(struct tmdd_obj));
-        if (html5) {
-            mkd_with_html5_tags();
-        }
         self->html5 = html5;
         RETVAL = self;
     OUTPUT:

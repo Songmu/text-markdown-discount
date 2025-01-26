@@ -1,6 +1,6 @@
 package Text::Markdown::Discount;
 
-use 5.008000;
+use 5.008001;
 use strict;
 use warnings;
 
@@ -57,6 +57,8 @@ sub markdown {
 
 1;
 __END__
+
+=for stopwords testsuite html5 hgroup nav superset
 
 =head1 NAME
 

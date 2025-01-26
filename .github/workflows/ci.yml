@@ -36,8 +36,8 @@ jobs:
 
     - name: Install Modules
       run: |
-        cpanm -v
-        cpanm --installdeps --notest .
+        cpanm -V
+        cpanm --installdeps --notest --with-configure --with-develop .
 
     - name: Show Errors on Windows
       if:  ${{ failure() && startsWith( matrix.runner, 'windows-')}}
@@ -56,13 +56,18 @@ jobs:
       run: |
          cat  /Users/runner/.cpanm/work/*/build.log
 
+    - name: Install html-tidy on ubuntu
+      if:  ${{ startsWith( matrix.runner, 'ubuntu-') }}
+      run: |
+         sudo apt-get update && sudo apt-get install -y tidy
+
     - name: Run tests
       env:
         AUTHOR_TESTING: 1
         RELEASE_TESTING: 1
       run: |
-        perl Makefile.PL
-        make
-        make test
+        perl Build.PL
+        ./Build
+        ./Build test
 
 

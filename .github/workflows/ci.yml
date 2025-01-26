@@ -34,6 +34,10 @@ jobs:
       uses: shogo82148/actions-setup-perl@v1
       with:
         perl-version: ${{ matrix.perl }}
+    - name: Install html-tidy on ubuntu
+      if:  ${{ startsWith( matrix.runner, 'ubuntu-') }}
+      run: |
+         sudo apt-get update && sudo apt-get install -y tidy
     - name: Install Modules
       run: |
         cpanm --quiet --installdeps --notest --with-configure --with-develop .

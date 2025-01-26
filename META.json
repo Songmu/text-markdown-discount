@@ -4,7 +4,7 @@
       "Masayoshi Sekimura, <sekimura@cpan.org>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v3.1.25, CPAN::Meta::Converter version 2.150010",
+   "generated_by" : "Minilla/v3.1.23, CPAN::Meta::Converter version 2.150010",
    "license" : [
       "perl_5"
    ],
@@ -64,7 +64,7 @@
          "web" : "https://github.com/Songmu/text-markdown-discount"
       }
    },
-   "version" : "0.17",
+   "version" : "0.18",
    "x_contributors" : [
       "Alessandro Ghedini <al3xbio@gmail.com>",
       "Anirvan Chatterjee <anirvan@users.noreply.github.com>",
@@ -79,14 +79,14 @@
       "Masayoshi Sekimura <sekimura@gmail.com>",
       "Masayoshi Sekimura <sekimura@sekimacmini.local>",
       "Masayoshi Sekimura <sekimura@sunny2.(none)>",
+      "Masayuki Matsuki <y.songmu@gmail.com>",
       "Neil Bowers <neil@bowers.com>",
       "Shoichi Kaji <skaji@cpan.org>",
-      "Songmu <y.songmu@gmail.com>",
       "harupong <harupong@gmail.com>",
       "hitode909 <hitode909@gmail.com>",
       "tokuhirom <tokuhirom@gmail.com>",
       "utagawa kiki <utagawakiki@gmail.com>"
    ],
-   "x_serialization_backend" : "JSON::PP version 4.16",
+   "x_serialization_backend" : "JSON::PP version 4.04",
    "x_static_install" : 0
 }

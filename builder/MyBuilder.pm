@@ -4,7 +4,7 @@ use warnings;
 
 use base "Module::Build";
 
-my $DISCOUNT_VERSION = "2.2.7d";
+my $DISCOUNT_VERSION = "3.0.0d";
 
 sub new {
     my ($class, %argv) = @_;

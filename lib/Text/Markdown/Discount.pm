@@ -30,6 +30,10 @@ our $VERSION = '0.18';
 require XSLoader;
 XSLoader::load('Text::Markdown::Discount', $VERSION);
 
+sub with_html5_tags {
+    # nop, just for compatibility
+}
+
 sub new {
     return bless {}, 'Text::Markdown::Discount';
 }

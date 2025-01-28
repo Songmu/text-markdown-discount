@@ -44,6 +44,7 @@ BOOT:
     newCONSTSUB(stash, "MKD_URLENCODEDANCHOR", newSViv(MKD_URLENCODEDANCHOR));
     newCONSTSUB(stash, "MKD_LATEX", newSViv(MKD_LATEX));
     newCONSTSUB(stash, "MKD_EXPLICITLIST", newSViv(MKD_EXPLICITLIST));
+    mkd_with_html5_tags();
 
 SV *
 TextMarkdown__markdown(sv_str, flags)
@@ -81,8 +82,3 @@ TextMarkdown__markdown(sv_str, flags)
         RETVAL = r;
     OUTPUT:
         RETVAL
-
-void
-TextMarkdown_with_html5_tags()
-    CODE:
-        mkd_with_html5_tags();

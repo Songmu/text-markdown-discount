@@ -29,19 +29,7 @@ _markdown_ is exported by default.
 
 ## FUNCTION
 
-- `Text::Markdown::Discount::with_html5_tags()`
-
-    This function enables html5 block-level elements support.
-    `Text::Markdown::Discount::markdown()` will handle these html5 tags as
-    block elements: aside, footer, header, hgroup, nav, section, article.
-
-    **NOTE**: There is no way to disable/re-enable this feature in one process right now.
-
-        use Text::Markdown::Discount;
-        Text::Markdown::Discount::with_html5_tags();
-        my $html = markdown('<article>content</article>');
-        #
-        # In $html, <article> tag won't be wrapped with <p> tag
+- `markdown($text, [$flags])`
 
 # SEE ALSO
 

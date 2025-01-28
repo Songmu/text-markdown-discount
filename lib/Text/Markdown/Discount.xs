@@ -22,7 +22,6 @@ BOOT:
     newCONSTSUB(stash, "MKD_NO_EXT", newSViv(MKD_NO_EXT));
     newCONSTSUB(stash, "MKD_CDATA", newSViv(MKD_CDATA));
     newCONSTSUB(stash, "MKD_NOSUPERSCRIPT", newSViv(MKD_NOSUPERSCRIPT));
-    newCONSTSUB(stash, "MKD_NORELAXED", newSViv(MKD_NORELAXED));
     newCONSTSUB(stash, "MKD_NOTABLES", newSViv(MKD_NOTABLES));
     newCONSTSUB(stash, "MKD_NOSTRIKETHROUGH", newSViv(MKD_NOSTRIKETHROUGH));
     newCONSTSUB(stash, "MKD_TOC", newSViv(MKD_TOC));
@@ -33,10 +32,8 @@ BOOT:
     newCONSTSUB(stash, "MKD_TABSTOP", newSViv(MKD_TABSTOP));
     newCONSTSUB(stash, "MKD_NODIVQUOTE", newSViv(MKD_NODIVQUOTE));
     newCONSTSUB(stash, "MKD_NOALPHALIST", newSViv(MKD_NOALPHALIST));
-    newCONSTSUB(stash, "MKD_NODLIST", newSViv(MKD_NODLIST));
     newCONSTSUB(stash, "MKD_EXTRA_FOOTNOTE", newSViv(MKD_EXTRA_FOOTNOTE));
     newCONSTSUB(stash, "MKD_NOSTYLE", newSViv(MKD_NOSTYLE));
-    newCONSTSUB(stash, "MKD_NODLDISCOUNT", newSViv(MKD_NODLDISCOUNT));
     newCONSTSUB(stash, "MKD_DLEXTRA", newSViv(MKD_DLEXTRA));
     newCONSTSUB(stash, "MKD_FENCEDCODE", newSViv(MKD_FENCEDCODE));
     newCONSTSUB(stash, "MKD_IDANCHOR", newSViv(MKD_IDANCHOR));
@@ -47,10 +44,11 @@ BOOT:
     mkd_with_html5_tags();
 
 SV *
-TextMarkdown__markdown(sv_str, flags)
+TextMarkdown__markdown(sv_str, flags_bits)
         SV *sv_str
-        int flags;
+        long flags_bits;
     PREINIT:
+        mkd_flag_t *flags;
         bool is_utf8 = SvUTF8(sv_str) != 0; // SvUTF8 doesn't typecast consistently to bool across various archs
         char *text = SvPV_nolen(sv_str);
         SV* r = &PL_sv_undef;
@@ -58,6 +56,8 @@ TextMarkdown__markdown(sv_str, flags)
         int szhtml;
         MMIOT *doc;
     CODE:
+        flags = mkd_flags();
+        mkd_set_flag_bitmap(flags, flags_bits);
         if ( (doc = mkd_string(text, strlen(text), flags)) == 0 ) {
             croak("failed at mkd_string");
         }

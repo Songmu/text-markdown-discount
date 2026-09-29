@@ -4,7 +4,7 @@ use warnings;
 
 use base "Module::Build";
 
-my $DISCOUNT_VERSION = "2.2.7d";
+my $DISCOUNT_VERSION = "3.0.2.0";
 
 sub new {
     my ($class, %argv) = @_;
@@ -34,10 +34,10 @@ sub ACTION_code {
 
     my $spec = $self->_infer_xs_spec(File::Spec->catfile("lib", "Text", "Markdown", "Discount.xs"));
     my $archive = File::Spec->catfile("discount-$DISCOUNT_VERSION", "libmarkdown.a");
-    if (!$self->up_to_date($archive, $spec->{lib_file})) {
+    if (!-e $archive || !$self->up_to_date($archive, $spec->{lib_file})) {
         $self->_build_discount or die;
-        push @{$self->{properties}{objects}}, $archive;
     }
+    push @{$self->{properties}{objects}}, $archive;
     $self->SUPER::ACTION_code(@argv);
 }
 

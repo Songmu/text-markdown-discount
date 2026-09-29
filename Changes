@@ -1,6 +1,7 @@
 Revision history for Perl extension Text::Markdown::XS.
 
 {{$NEXT}}
+	- update Discount to v3.0.2.0 while preserving the legacy flag API
 
 0.18 2025-01-26T05:05:12Z
 	- maintenace release (just update toolchains)

@@ -1,0 +1,23 @@
+diff --git a/generate.c b/generate.c
+index 29de73c..e761a3e 100644
+--- a/generate.c
++++ b/generate.c
+@@ -619,8 +619,7 @@ typedef struct linkytype {
+ 
+ static linkytype imaget = { 0, 0, "<img src=\"", "\"",
+ 			     1, " alt=\"", "\" />", { { [MKD_NOIMAGE] = 1,
+-							[MKD_TAGTEXT] = 1,
+-							[MKD_ALT_AS_TITLE] = 1 } }, IS_URL };
++							[MKD_TAGTEXT] = 1 } }, IS_URL };
+ static linkytype linkt  = { 0, 0, "<a href=\"", "\"",
+ 			     0, ">", "</a>", { {[MKD_NOLINKS] = 1} }, IS_URL };
+ 
+@@ -792,7 +791,7 @@ linkyformat(MMIOT *f, Cstring text, int image, Footnote *ref)
+ 	if ( S(ref->extended_attr) > 0 )
+ 	    Qprintf(f, " %s", T(ref->extended_attr));
+ 
+-	if ( S(ref->title) || (is_flag_set(&f->flags, MKD_ALT_AS_TITLE) && is_flag_set(&tag->flags, MKD_ALT_AS_TITLE)) ) {
++	if ( S(ref->title) || (image && is_flag_set(&f->flags, MKD_ALT_AS_TITLE)) ) {
+ 	    Qstring(" title=\"", f);
+ 	    if ( S(ref->title) )
+ 		___mkd_reparse(T(ref->title), S(ref->title), &tagtext, f, 0);

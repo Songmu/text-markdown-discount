@@ -4,7 +4,7 @@ Revision history for Perl extension Text::Markdown::XS.
 	- update Discount to v3.0.2.0 while preserving the legacy flag API
 	- add hashref options for Discount 3 flags that do not fit in the
 	  legacy 32-bit bitmap
-	- work around Discount 3.0.2.0 MKD_ALT_AS_TITLE image handling
+	- pass MKD_ALT_AS_TITLE through with its upstream 3.0.2.0 behavior
 
 0.18 2025-01-26T05:05:12Z
 	- maintenace release (just update toolchains)

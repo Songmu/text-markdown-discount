@@ -155,6 +155,9 @@ If it is omitted or undefined, the existing default bitmap is used.
 
 C<normal_listitem> disables GitHub-style checkbox list items.
 C<alt_as_title> uses image alt text as its title when no title is specified.
+With the bundled Discount 3.0.2.0 release, images are not rendered as expected
+when this option is enabled. The option is passed through unchanged so it will
+follow upstream behavior when Discount is updated.
 C<extended_attr> enables extended attribute suffixes on links, images, and
 reference links. These options do not consume bits in the legacy bitmap and
 are therefore safe on 32-bit Perl builds.

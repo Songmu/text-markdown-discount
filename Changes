@@ -1,6 +1,8 @@
 Revision history for Perl extension Text::Markdown::XS.
 
 {{$NEXT}}
+
+0.19 2026-09-30T13:18:11Z
 	- update Discount to v3.0.2.0 while preserving the legacy flag API
 	- add hashref options for Discount 3 flags that do not fit in the
 	  legacy 32-bit bitmap

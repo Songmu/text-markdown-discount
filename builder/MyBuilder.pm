@@ -13,9 +13,10 @@ use File::Spec;
 my $DISCOUNT_VERSION = "3.0.2.0";
 my $DISCOUNT_SOURCE_DIR = "discount-$DISCOUNT_VERSION";
 my $DISCOUNT_BUILD_DIR = File::Spec->catdir("_build", "discount-$DISCOUNT_VERSION");
-my $DISCOUNT_PATCH = File::Spec->catfile(
+my $DISCOUNT_PATCHED_GENERATE = File::Spec->catfile(
     "patches",
-    "discount-$DISCOUNT_VERSION-alt-as-title.patch",
+    $DISCOUNT_SOURCE_DIR,
+    "generate.c",
 );
 
 sub new {
@@ -66,47 +67,6 @@ sub _copy_tree {
     );
 }
 
-sub _replace_once {
-    my ($content, $old, $new, $description) = @_;
-
-    my $offset = index($$content, $old);
-    die "cannot apply $description: expected source was not found\n"
-        if $offset < 0;
-    die "cannot apply $description: expected source is not unique\n"
-        if index($$content, $old, $offset + length($old)) >= 0;
-
-    substr($$content, $offset, length($old), $new);
-}
-
-sub _apply_discount_patch {
-    my $path = File::Spec->catfile($DISCOUNT_BUILD_DIR, "generate.c");
-
-    open my $input, "<", $path or die "open $path: $!";
-    local $/;
-    my $content = <$input>;
-    close $input or die "close $path: $!";
-
-    _replace_once(
-        \$content,
-        "[MKD_TAGTEXT] = 1,\n"
-            . "\t\t\t\t\t\t\t[MKD_ALT_AS_TITLE] = 1",
-        "[MKD_TAGTEXT] = 1",
-        "MKD_ALT_AS_TITLE image flag fix",
-    );
-    _replace_once(
-        \$content,
-        "if ( S(ref->title) || (is_flag_set(&f->flags, MKD_ALT_AS_TITLE) && "
-            . "is_flag_set(&tag->flags, MKD_ALT_AS_TITLE)) ) {",
-        "if ( S(ref->title) || (image && "
-            . "is_flag_set(&f->flags, MKD_ALT_AS_TITLE)) ) {",
-        "MKD_ALT_AS_TITLE rendering fix",
-    );
-
-    open my $output, ">", $path or die "open $path: $!";
-    print {$output} $content or die "write $path: $!";
-    close $output or die "close $path: $!";
-}
-
 sub _prepare_discount {
     my $self = shift;
 
@@ -114,7 +74,10 @@ sub _prepare_discount {
     mkpath(File::Spec->catdir("_build"));
 
     _copy_tree($DISCOUNT_SOURCE_DIR, $DISCOUNT_BUILD_DIR);
-    _apply_discount_patch();
+    copy(
+        $DISCOUNT_PATCHED_GENERATE,
+        File::Spec->catfile($DISCOUNT_BUILD_DIR, "generate.c"),
+    ) or die "copy $DISCOUNT_PATCHED_GENERATE: $!";
     return 1;
 }
 
@@ -142,7 +105,7 @@ sub ACTION_code {
     my $archive = File::Spec->catfile($DISCOUNT_BUILD_DIR, "libmarkdown.a");
     my @sources = (
         __FILE__,
-        $DISCOUNT_PATCH,
+        $DISCOUNT_PATCHED_GENERATE,
         grep { -f } glob(File::Spec->catfile($DISCOUNT_SOURCE_DIR, "*")),
     );
     if (!$self->up_to_date(\@sources, $archive)) {

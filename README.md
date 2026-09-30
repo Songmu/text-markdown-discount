@@ -29,7 +29,33 @@ _markdown_ is exported by default.
 
 ## FUNCTION
 
-- `markdown($text, [$flags])`
+- `markdown($text, [$flags_or_options])`
+
+The legacy form accepts a scalar bitmap made by combining `MKD_*`
+constants:
+
+    my $html = markdown(
+        $text,
+        MKD_NOHEADER | MKD_NOPANTS | MKD_FENCEDCODE,
+    );
+
+The options form accepts a hash reference:
+
+    my $html = markdown($text, {
+        flags           => MKD_NOHEADER | MKD_NOPANTS,
+        normal_listitem => 1,
+        alt_as_title    => 1,
+        extended_attr   => 1,
+    });
+
+The `flags` option is the same legacy bitmap accepted by the scalar form.
+If it is omitted or undefined, the existing default bitmap is used.
+
+`normal_listitem` disables GitHub-style checkbox list items.
+`alt_as_title` uses image alt text as its title when no title is specified.
+`extended_attr` enables extended attribute suffixes on links, images, and
+reference links. These options do not consume bits in the legacy bitmap and
+are therefore safe on 32-bit Perl builds.
 
 # SEE ALSO
 

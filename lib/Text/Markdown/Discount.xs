@@ -39,6 +39,10 @@
 #define MKD2_LATEX               0x40000000
 #define MKD2_EXPLICITLIST        0x80000000
 
+#define MKD3_OPTION_NORMAL_LISTITEM 0x01
+#define MKD3_OPTION_ALT_AS_TITLE    0x02
+#define MKD3_OPTION_EXTENDED_ATTR   0x04
+
 static mkd_flag_t *
 legacy_flags(uint32_t bits)
 {
@@ -95,6 +99,67 @@ legacy_flags(uint32_t bits)
     return flags;
 }
 
+static void
+set_option_flags(mkd_flag_t *flags, uint32_t bits)
+{
+    if (bits & MKD3_OPTION_NORMAL_LISTITEM) {
+        mkd_set_flag_num(flags, MKD_NORMAL_LISTITEM);
+    }
+    if (bits & MKD3_OPTION_ALT_AS_TITLE) {
+        mkd_set_flag_num(flags, MKD_ALT_AS_TITLE);
+    }
+    if (bits & MKD3_OPTION_EXTENDED_ATTR) {
+        mkd_set_flag_num(flags, MKD_EXTENDED_ATTR);
+    }
+}
+
+static SV *
+render_markdown(SV *sv_str, uint32_t legacy_bits, uint32_t option_bits)
+{
+    bool is_utf8 = SvUTF8(sv_str) != 0; /* SvUTF8 does not consistently cast to bool across architectures */
+    char *text = SvPV_nolen(sv_str);
+    SV *result = &PL_sv_undef;
+    char *html = NULL;
+    int szhtml;
+    MMIOT *doc;
+    mkd_flag_t *discount_flags;
+
+    discount_flags = legacy_flags(legacy_bits);
+    if (discount_flags == NULL) {
+        croak("failed to allocate Discount flags");
+    }
+    set_option_flags(discount_flags, option_bits);
+
+    if ((doc = mkd_string(text, strlen(text), discount_flags)) == 0) {
+        mkd_free_flags(discount_flags);
+        croak("failed at mkd_string");
+    }
+
+    if (!mkd_compile(doc, discount_flags)) {
+        mkd_cleanup(doc);
+        mkd_free_flags(discount_flags);
+        croak("failed at mkd_compile");
+    }
+
+    if ((szhtml = mkd_document(doc, &html)) == EOF) {
+        mkd_cleanup(doc);
+        mkd_free_flags(discount_flags);
+        croak("failed at mkd_document");
+    }
+
+    result = newSVpvn(html, szhtml);
+    if (szhtml == 0 || html[szhtml - 1] != '\n') {
+        sv_catpv(result, "\n");
+    }
+    if (is_utf8) {
+        sv_utf8_decode(result);
+    }
+
+    mkd_cleanup(doc);
+    mkd_free_flags(discount_flags);
+    return result;
+}
+
 MODULE = Text::Markdown::Discount		PACKAGE = Text::Markdown::Discount	PREFIX = TextMarkdown_
 
 PROTOTYPES: DISABLE
@@ -137,47 +202,21 @@ SV *
 TextMarkdown__markdown(sv_str, flags)
         SV *sv_str
         UV flags;
-    PREINIT:
-        bool is_utf8 = SvUTF8(sv_str) != 0; // SvUTF8 doesn't typecast consistently to bool across various archs
-        char *text = SvPV_nolen(sv_str);
-        SV* r = &PL_sv_undef;
-        char *html = NULL;
-        int szhtml;
-        MMIOT *doc;
-        mkd_flag_t *discount_flags;
     CODE:
-        discount_flags = legacy_flags((uint32_t)flags);
-        if (discount_flags == NULL) {
-            croak("failed to allocate Discount flags");
-        }
+        RETVAL = render_markdown(sv_str, (uint32_t)flags, 0);
+    OUTPUT:
+        RETVAL
 
-        if ( (doc = mkd_string(text, strlen(text), discount_flags)) == 0 ) {
-            mkd_free_flags(discount_flags);
-            croak("failed at mkd_string");
-        }
-
-        if ( !mkd_compile(doc, discount_flags) ) {
-            mkd_cleanup(doc);
-            mkd_free_flags(discount_flags);
-            croak("failed at mkd_compile");
-        }
-
-        if ( (szhtml = mkd_document(doc, &html)) == EOF ) {;
-            mkd_cleanup(doc);
-            mkd_free_flags(discount_flags);
-            croak("failed at mkd_document");
-        }
-
-        r = newSVpvn(html, szhtml);
-        if (szhtml == 0 || html[szhtml - 1] != '\n') {
-            sv_catpv(r, "\n");
-        }
-        if (is_utf8) {
-            sv_utf8_decode(r);
-        }
-
-        mkd_cleanup(doc);
-        mkd_free_flags(discount_flags);
-        RETVAL = r;
+SV *
+TextMarkdown__markdown_with_options(sv_str, flags, option_flags)
+        SV *sv_str
+        UV flags;
+        UV option_flags;
+    CODE:
+        RETVAL = render_markdown(
+            sv_str,
+            (uint32_t)flags,
+            (uint32_t)option_flags
+        );
     OUTPUT:
         RETVAL

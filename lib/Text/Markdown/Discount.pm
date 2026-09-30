@@ -4,6 +4,8 @@ use 5.008001;
 use strict;
 use warnings;
 
+use Carp qw(croak);
+
 require Exporter;
 
 our @ISA = qw(Exporter);
@@ -30,6 +32,12 @@ our $VERSION = '0.18';
 require XSLoader;
 XSLoader::load('Text::Markdown::Discount', $VERSION);
 
+my %DISCOUNT_OPTION_FLAG = (
+    normal_listitem => 0x01,
+    alt_as_title    => 0x02,
+    extended_attr   => 0x04,
+);
+
 sub with_html5_tags {
     # nop, just for compatibility
 }
@@ -55,6 +63,29 @@ sub markdown {
     if (not defined $flags) {
         $flags = MKD_NOHEADER()|MKD_NOPANTS()|MKD_DLEXTRA()|MKD_FENCEDCODE();
     }
+
+    if (ref $flags) {
+        croak('markdown options must be a hash reference')
+            unless ref $flags eq 'HASH';
+
+        my %options = %{$flags};
+        my $legacy_flags = delete $options{flags};
+        if (not defined $legacy_flags) {
+            $legacy_flags = MKD_NOHEADER()|MKD_NOPANTS()|MKD_DLEXTRA()|MKD_FENCEDCODE();
+        }
+
+        my $option_flags = 0;
+        for my $name (keys %DISCOUNT_OPTION_FLAG) {
+            $option_flags |= $DISCOUNT_OPTION_FLAG{$name}
+                if delete $options{$name};
+        }
+        if (keys %options) {
+            croak('unknown markdown option(s): ' . join(', ', sort keys %options));
+        }
+
+        return _markdown_with_options($text, $legacy_flags, $option_flags);
+    }
+
     return _markdown($text, $flags);
 }
 
@@ -98,9 +129,38 @@ I<markdown> is exported by default.
 
 =over
 
-=item C<< markdown($text, [$flags]) >>
+=item C<< markdown($text, [$flags_or_options]) >>
 
 =back
+
+The legacy form accepts a scalar bitmap made by combining C<MKD_*>
+constants:
+
+  my $html = markdown(
+      $text,
+      MKD_NOHEADER | MKD_NOPANTS | MKD_FENCEDCODE,
+  );
+
+The options form accepts a hash reference:
+
+  my $html = markdown($text, {
+      flags           => MKD_NOHEADER | MKD_NOPANTS,
+      normal_listitem => 1,
+      alt_as_title    => 1,
+      extended_attr   => 1,
+  });
+
+The C<flags> option is the same legacy bitmap accepted by the scalar form.
+If it is omitted or undefined, the existing default bitmap is used.
+
+C<normal_listitem> disables GitHub-style checkbox list items.
+C<alt_as_title> uses image alt text as its title when no title is specified.
+With the bundled Discount 3.0.2.0 release, images are not rendered as expected
+when this option is enabled. The option is passed through unchanged so it will
+follow upstream behavior when Discount is updated.
+C<extended_attr> enables extended attribute suffixes on links, images, and
+reference links. These options do not consume bits in the legacy bitmap and
+are therefore safe on 32-bit Perl builds.
 
 =head1 SEE ALSO
 

@@ -7,9 +7,11 @@ on:
 jobs:
   list:
     name: List Perl Versions
+    permissions: {}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-    - uses: shogo82148/actions-setup-perl@v1
+    - uses: shogo82148/actions-setup-perl@b61fd6db748050f91bedd4d72ad5e404b5177cc0 # v1.44.1
     - name: list available perl versions
       id: set-matrix
       shell: perl {0}
@@ -22,16 +24,21 @@ jobs:
   test:
     name: Run Test with Perl ${{ matrix.perl }} on ${{ matrix.runner }}
     needs: list
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
         perl: ${{fromJson(needs.list.outputs.perl)}}
         runner: [ubuntu-latest, macos-latest]  # , windows-latest
     runs-on: ${{matrix.runner}}
+    timeout-minutes: 30
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
     - name: Setup perl
-      uses: shogo82148/actions-setup-perl@v1
+      uses: shogo82148/actions-setup-perl@b61fd6db748050f91bedd4d72ad5e404b5177cc0 # v1.44.1
       with:
         perl-version: ${{ matrix.perl }}
     - name: Install html-tidy on ubuntu

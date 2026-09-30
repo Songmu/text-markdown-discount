@@ -4,9 +4,14 @@ The `discount-*` directories are pristine copies of upstream releases and
 must not be modified locally.
 
 `builder/MyBuilder.pm` copies the bundled Discount source into `_build/`,
-applies the patches in this directory, and builds the static library from that
-working copy. Building therefore requires the standard `cp` and `patch`
-utilities in addition to the existing `sh` and `make` requirements.
+applies the corresponding changes with strict, version-specific substitutions,
+and builds the static library from that working copy. Copying and patch
+application use only Perl core modules, so they do not add external `cp` or
+`patch` command requirements.
+
+The unified diffs in this directory document the intended changes for review.
+The substitutions in `builder/MyBuilder.pm` are the executable implementation
+and fail if the expected upstream source is missing or not unique.
 
 ## discount-3.0.2.0-alt-as-title.patch
 
